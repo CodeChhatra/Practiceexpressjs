@@ -22,8 +22,9 @@ const createUser = async (username, password, email, firstname, lastname) => {
 
 const authenticateUser = async (username, password) => { 
   try {
+    
     const user = await User.findOne({ username });
-
+         console.log('user')
     if (!user) {
       return null;
     }
@@ -40,4 +41,13 @@ const authenticateUser = async (username, password) => {
   }
 };
 
-module.exports = { createUser, authenticateUser }; 
+const getUserByAccessToken = async (accesstoken) =>{
+  try{
+    const user = await User.findOne({ _id : accesstoken});
+    return user;
+  }catch(error){
+    throw new Error('Error Finding User By Access Token')
+  }
+}
+
+module.exports = { createUser, authenticateUser, getUserByAccessToken }; 

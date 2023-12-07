@@ -20,6 +20,24 @@ const createUser = async (username, password, email, firstname, lastname) => {
   }
 };
 
-// Other methods like updateUser, deleteUser, getUserById, etc.
+const authenticateUser = async (username, password) => { 
+  try {
+    const user = await User.findOne({ username });
 
-module.exports = { createUser };
+    if (!user) {
+      return null;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (passwordMatch) {
+      return user;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    throw new Error('Error authenticating user');
+  }
+};
+
+module.exports = { createUser, authenticateUser }; 

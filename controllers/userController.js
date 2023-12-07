@@ -17,8 +17,29 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: 'Error registering user' });
   }
 };
+const loginUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-module.exports = { registerUser };
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    const user = await UserService.authenticateUser(username, password);
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid username or password' });
+    }
+
+    res.json({ access_token: user._id });
+  } catch (error) {
+    console.error('Error logging in User:', error);
+    res.status(500).json({ message: 'Error logging in user' });
+  }
+};
+
+
+module.exports = { registerUser, loginUser};
 
   
 

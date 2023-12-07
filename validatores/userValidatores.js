@@ -36,5 +36,17 @@ const validatorsArray = [
   body('lastname').notEmpty().withMessage('Last Name Cannot be Empty'),
 ];
 
+const loginValidators = [
+  body('username')
+    .trim()
+    .notEmpty()
+    .withMessage('Username is required'),
 
-module.exports = validatorsArray;
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required'),
+];
+
+
+
+module.exports = { validatorsArray, loginValidators}

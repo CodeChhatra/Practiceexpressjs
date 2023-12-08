@@ -49,4 +49,5 @@ const loginValidators = [
 
 
 
+
 module.exports = { validatorsArray, loginValidators}

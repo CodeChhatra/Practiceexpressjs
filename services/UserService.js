@@ -1,3 +1,4 @@
+const AccessToken = require("../models/AccessToken");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
@@ -62,5 +63,47 @@ const getPaginatedUsers = async (req, res) => {
     res.status(500).json({ data: [], message: 'Error fetching users' });
   }
 };
+const getUserByAccessToken = async (accesstoken) =>{
+  try{
+    const user = await User.findOne({ _id : accesstoken});
+    return user;
+  }catch(error){
+    throw new Error('Error Finding User By Access Token')
+  }
+}
 
-module.exports = { createUser, authenticateUser, getPaginatedUsers };
+const addAddress = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { user_id, address, city, state, pin_code, phone_no } = req.body;
+
+    
+    const access_token = req.headers.access_token; 
+
+
+    const user = await UserService.addAddress(
+      user_id,
+      address,
+      city,
+      state,
+      pin_code,
+      phone_no
+    );
+
+    res.status(201).json({ message: 'Address added successfully', user });
+  } catch (error) {
+    console.error('Error adding address:', error);
+    res.status(500).json({ error: 'Error adding address' });
+  }
+};
+
+
+
+
+
+
+module.exports = { createUser, authenticateUser, getPaginatedUsers, addAddress,getUserByAccessToken};

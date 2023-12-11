@@ -2,6 +2,7 @@ const express = require('express')
 const app = express();
 const connectDB = require('../q2/database/db')
 var bodyParser = require('body-parser')
+require('dotenv').config();
 
  
 connectDB();

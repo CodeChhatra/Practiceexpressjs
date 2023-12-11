@@ -1,4 +1,4 @@
-// Inside a dedicated Passport configuration file or alongside your existing code
+
 
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;

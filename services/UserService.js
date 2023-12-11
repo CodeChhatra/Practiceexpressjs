@@ -107,7 +107,7 @@ const updateAccessToken = async (userId, accessToken) => {
     if (!user) {
       throw new Error('User not found');
     }
-    user.AccessToken = accessToken;
+    user.accessToken = accessToken;
     await user.save();
     return user;
   } catch (error) {
@@ -115,7 +115,37 @@ const updateAccessToken = async (userId, accessToken) => {
   }
 };
 
+async function deleteAddresses(userId, addressIds) {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { addresses: { _id: { $in: addressIds } } } },
+      { new: true }
+    );
+    return updatedUser;
+  } catch (error) {
+    throw new Error('Error deleting addresses');
+  }
+}
+
+async function generatePasswordResetToken(email) {
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const payload = { userId: user._id };
+    const token = jwt.sign(payload, process.env.RESET_TOKEN_SECRET, { expiresIn: '15m' });
+
+    return token;
+  } catch (error) {
+    throw new Error('Error generating password reset token');
+  }
+}
 
 
 
-module.exports = { createUser, authenticateUser, getPaginatedUsers, addAddress, getUserByAccessToken, updateAccessToken};
+
+module.exports = { createUser, authenticateUser, getPaginatedUsers, addAddress, getUserByAccessToken, updateAccessToken, deleteAddresses, generatePasswordResetToken};

@@ -8,8 +8,7 @@ const accessTokenSchema = new mongoose.Schema({
   },
   access_token: {
     type: String,
-    required: true
-    
+    required: true    
   },
   expiry: {
     type: Date,

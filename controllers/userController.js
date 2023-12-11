@@ -2,8 +2,9 @@ const { validationResult } = require('express-validator');
 const md5 = require('md5');
 const User = require('../models/User');
 const UserService = require('../services/UserService');
-const AccessToken = require('../models/AccessToken');
-const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken');
+const env = require('dotenv')
+require('dotenv').config();
 
 const registerUser = async (req, res) => {
   try{
@@ -19,6 +20,8 @@ const registerUser = async (req, res) => {
     res.status(500).json({ data: [], message: 'Error registering user' });
   }
 };
+
+
 const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -32,20 +35,21 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: 'Invalid username or password' });
     }
-    const accessToken = md5(Math.random().toString());
-    const expiry = new Date();
-    expiry.setHours(expiry.getHours() + 1);
 
-    const newAccessToken = new AccessToken({
-      user_id: user._id,
-      access_token: accessToken,
-      expiry: expiry,
-    });
+    
+    const payload = {
+      user: {
+        id: user._id,
+        username: user.username 
+      }
+    };
 
-    await newAccessToken.save();
+    
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }); 
+    
+    await UserService.updateAccessToken(user._id, accessToken);
 
-
-    res.json({ access_token: accessToken});
+    res.json({ access_token: accessToken });
   } catch (error) {
     console.error('Error logging in User:', error);
     res.status(500).json({ message: 'Error logging in user' });

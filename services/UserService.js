@@ -101,9 +101,21 @@ const addAddress = async (req, res) => {
   }
 };
 
+const updateAccessToken = async (userId, accessToken) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    user.AccessToken = accessToken;
+    await user.save();
+    return user;
+  } catch (error) {
+    throw new Error('Error updating access token for user');
+  }
+};
 
 
 
 
-
-module.exports = { createUser, authenticateUser, getPaginatedUsers, addAddress,getUserByAccessToken};
+module.exports = { createUser, authenticateUser, getPaginatedUsers, addAddress, getUserByAccessToken, updateAccessToken};
